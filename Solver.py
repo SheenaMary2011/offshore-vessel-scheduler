@@ -35,7 +35,6 @@ for job_name, job_days in jobs.items():
 
     interval = model.new_interval_var(
         start, job_days, start + job_days, f"job_{job_name}")
-    print("xxxxxxx")
     print(interval)
 
     starts[job_name] = start

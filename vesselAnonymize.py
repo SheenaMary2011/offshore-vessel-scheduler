@@ -18,5 +18,5 @@ for name in vessels["operator"]:
 vessels["vessel_name"] = vessels["vessel_name"].map(vessel_code)
 vessels["operator"] = vessels["operator"].map(operator_code)
 
-vessels.to_csv("data/vessles_anon.csv", index=False)
+vessels.to_csv("data/vessels_anon.csv", index=False)
 
