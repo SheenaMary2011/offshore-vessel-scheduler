@@ -1,0 +1,13 @@
+job_id,client_name,job_type,duration_days
+J01,Northstar Offshore Wind,Turbine installation,3
+J02,Northstar Offshore Wind,Cable inspection,1
+J03,Bluefin Renewables,Buoy maintenance,1
+J04,Bluefin Renewables,Seabed survey,2
+J05,Avalon Tidal Energy,Turbine installation,4
+J06,Northstar Offshore Wind,Cable inspection,1
+J07,Avalon Tidal Energy,Mooring check,2
+J08,Bluefin Renewables,Turbine installation,3
+J09,Northstar Offshore Wind,Seabed survey,2
+J10,Avalon Tidal Energy,Buoy maintenance,1
+J11,Bluefin Renewables,Cable repair,2
+J12,Northstar Offshore Wind,Mooring check,1
