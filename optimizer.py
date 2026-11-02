@@ -10,15 +10,11 @@ def get_allowed_starts(duration, storm_days):
             allowed.append(i)
     return allowed
 
-
-if __name__ == "__main__":
+def run_optimizer(weather, vessels, jobs):
     model = cp_model.CpModel()
     choices = {} 
-    weather = pd.read_csv("data/weather_cleaned.csv")
-    vessels = pd.read_csv("data/vessels_anon.csv")
-    jobs =   pd.read_csv("data/jobs_anon.csv")
     storm_days_by_vessel  = {}
-    
+        
     schedule =[]
 
     for index, vessel in vessels.iterrows():
@@ -58,6 +54,8 @@ if __name__ == "__main__":
     solver = cp_model.CpSolver()
     solver.solve(model)
 
+     
+
 
 
     for (job_id, name), (is_assigned, start) in choices.items():
@@ -68,9 +66,20 @@ if __name__ == "__main__":
                                 "start_day": start_day, "finish_day": start_day + duration - 1})
 
     schedule_table = pd.DataFrame(schedule).sort_values("start_day")
+
+    return schedule_table, solver.value(last_day)
+    
+
+if __name__ == "__main__":
+    
+    weather = pd.read_csv("data/weather_cleaned.csv")
+    vessels = pd.read_csv("data/vessels_anon.csv")
+    jobs =   pd.read_csv("data/jobs_anon.csv")
+    
+    schedule_table,last_day = run_optimizer(weather,vessels,jobs)
     print(schedule_table)
     schedule_table.to_csv("data/optimized_schedule.csv", index=False)
-    print("Optimized finishes on day", solver.value(last_day))   
+    print("Optimized finishes on day", last_day)   
 
 
 
