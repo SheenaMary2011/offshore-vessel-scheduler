@@ -23,14 +23,18 @@ def draw_schedule(ax, schedule, title):
     ax.set_xlim(0.5, 30.5)                  # show days 1 to 30
     ax.set_title(title)
 
+def make_comparison_chart(baseline_schedule, optimized_schedule):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11, 5), sharex=True)
+    draw_schedule(ax1, baseline_schedule, "Greedy baseline")
+    draw_schedule(ax2, optimized_schedule, "OR-Tools optimizer")
+    ax2.set_xlabel("Day of November 2026")
+    plt.tight_layout()
+    return fig
 
 if __name__ == "__main__":
     baseline = pd.read_csv("data/baseline_schedule.csv")
     optimized = pd.read_csv("data/optimized_schedule.csv")
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11, 5), sharex=True)
-    draw_schedule(ax1, baseline, "Greedy baseline")
-    draw_schedule(ax2, optimized, "OR-Tools optimizer")
-    ax2.set_xlabel("Day of November 2026")
-    plt.tight_layout()
-    plt.savefig("schedule_comparison.png", dpi=150)
+    fig = make_comparison_chart(baseline,optimized)
+    
+    fig.savefig("schedule_comparison.png", dpi=150)
     plt.show()
