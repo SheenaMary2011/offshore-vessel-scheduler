@@ -24,15 +24,16 @@ def  fix_height(value):
         return None
     return round(metres,1)
 
+def clean_weather(raw):
+    raw["date"] = raw["date"].apply(fix_date)
+    raw["wave_height_m"] =  raw["wave_height_m"].apply(fix_height)
+    raw= raw.drop_duplicates()
+    return raw
 
 if __name__ == "__main__":
     
     raw = pd.read_csv("data/weather_raw.csv", dtype=str)
-    # 2. Run fix_date on every value in the date column
-    raw["date"] = raw["date"].apply(fix_date)
-    raw["wave_height_m"] =  raw["wave_height_m"].apply(fix_height)
-    raw= raw.drop_duplicates()
+    raw =clean_weather(raw)
     raw.to_csv("data/weather_cleaned.csv", index=False)
-
     print(raw)
     print("Rows:", len(raw))
