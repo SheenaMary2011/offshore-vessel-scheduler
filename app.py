@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 from clean_weather import clean_weather
+from clean_weather import check_weather
 from baseline import run_baseline
 from optimizer import run_optimizer
 from compare import make_comparison_chart
+
 
 st.set_page_config(page_title="Vessel Scheduler", layout="wide")
 
@@ -20,6 +22,11 @@ if uploaded is None:
     weather = pd.read_csv("data/weather_cleaned.csv")
 else:
     raw = pd.read_csv(uploaded, dtype=str)
+    problems = check_weather(raw)
+    if len(problems) >0:
+        for error in problems:
+            st.error(error)
+        st.stop()
     weather = clean_weather(raw)
 if st.sidebar.button("Run Scheduler"):
     base_schedule_table, last_finish=run_baseline(weather, vessels, jobs)

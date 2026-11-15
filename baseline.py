@@ -5,12 +5,15 @@ HORIZON = 30
 def get_storm_days(weather, max_wave):
     start_date = pd.to_datetime(weather["date"]).min() 
     storm_days=[]
+    for i in range(1,HORIZON+1):
+        storm_days.append(i)
     for index,row in weather.iterrows():
         date=pd.to_datetime(row["date"])
         day = (date - start_date).days + 1 
         wave_height = row["wave_height_m"]
-        if(pd.isna(wave_height) or wave_height > max_wave):
-            storm_days.append(day)
+        if(not pd.isna(wave_height) and  wave_height <= max_wave):
+            if day in storm_days:
+                storm_days.remove(day)
     return storm_days
 
 def fits(start,duration,stormDays):
