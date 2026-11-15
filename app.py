@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from clean_weather import clean_weather
 from baseline import run_baseline
 from optimizer import run_optimizer
 from compare import make_comparison_chart
@@ -11,9 +12,15 @@ st.write("Efficiently scheduling the Jobs with available vessels")
 
 vessels = pd.read_csv("data/vessels_anon.csv")
 jobs =   pd.read_csv("data/jobs_anon.csv")
-weather = pd.read_csv("data/weather_cleaned.csv")
+
 st.sidebar.header("Controls")
 st.sidebar.write("Click to compare the baseline and optimized schedules")
+uploaded = st.sidebar.file_uploader("Upload weather CSV", type="csv")
+if uploaded is None:
+    weather = pd.read_csv("data/weather_cleaned.csv")
+else:
+    raw = pd.read_csv(uploaded, dtype=str)
+    weather = clean_weather(raw)
 if st.sidebar.button("Run Scheduler"):
     base_schedule_table, last_finish=run_baseline(weather, vessels, jobs)
     optimized_schedule_table,last_day = run_optimizer(weather, vessels, jobs)
