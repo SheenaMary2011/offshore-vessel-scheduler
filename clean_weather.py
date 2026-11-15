@@ -50,6 +50,7 @@ def  fix_height(value):
     return round(metres,1)
 
 def clean_weather(raw):
+    raw = raw.dropna(subset=["date"])
     raw["date"] = raw["date"].apply(fix_date)
     raw["wave_height_m"] =  raw["wave_height_m"].apply(fix_height)
     raw= raw.drop_duplicates()
