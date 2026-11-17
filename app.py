@@ -4,7 +4,7 @@ from clean_weather import clean_weather, check_weather
 from baseline import run_baseline
 from optimizer import run_optimizer
 from compare import make_comparison_chart
-
+from checks import check_jobs
 
 st.set_page_config(page_title="Vessel Scheduler", layout="wide")
 
@@ -26,6 +26,7 @@ st.sidebar.download_button(
 st.sidebar.header("⚙️ Controls")
 st.sidebar.write("Click to compare the baseline and optimized schedules")
 uploaded = st.sidebar.file_uploader("Upload weather CSV", type="csv")
+job_file = st.sidebar.file_uploader("Uplaod job CSV",type="csv")
 if uploaded is None:
     weather = pd.read_csv("data/weather_cleaned.csv")
 else:
@@ -37,6 +38,21 @@ else:
         st.stop()
     weather = clean_weather(raw)
     st.sidebar.success("✅ Weather file loaded")
+
+if job_file is None:
+    jobs = pd.read_csv("data/jobs_anon.csv")
+else:
+    jobs = pd.read_csv(job_file, dtype=str)
+    jobs = jobs.drop_duplicates()
+    problems = check_jobs(jobs)
+    if len(problems) > 0:
+        for error in problems:
+            st.error(error)
+        st.stop()
+    jobs["duration_days"] = jobs["duration_days"].astype(int)
+    st.sidebar.success("✅ Jobs file loaded")
+
+
 run = st.sidebar.button("🚀 Run Scheduler", type="primary", width="stretch")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -91,11 +107,14 @@ with tab1:
     st.dataframe(vessels, width="stretch", hide_index=True)
 
 with tab2:
-    st.dataframe(
-        jobs.style.map(lambda v: f"background-color: {job_colors.get(v, '')}",
-                       subset=["job_type"]),
-        width="stretch", hide_index=True,
-    )
+    if "job_type" in jobs.columns:
+        st.dataframe(
+            jobs.style.map(lambda v: f"background-color: {job_colors.get(v, '')}",
+                           subset=["job_type"]),
+            width="stretch", hide_index=True,
+        )
+    else:
+        st.dataframe(jobs, width="stretch", hide_index=True)
 
 with tab3:
     st.line_chart(weather, x="date", y="wave_height_m", color="#0EA5E9")
