@@ -60,8 +60,20 @@ if run:
     col_a, col_b = st.columns(2)
     col_a.subheader("Baseline schedule")
     col_a.dataframe(base_schedule_table, width="stretch", hide_index=True)
+    col_a.download_button(label ="Download Baseline Schedule",
+                          data = base_schedule_table.to_csv(index=False),
+                          file_name="baseline_schedule.csv",
+                          mime="text/csv",          
+                          on_click="ignore"
+                          )
     col_b.subheader("Optimized schedule")
     col_b.dataframe(optimized_schedule_table, width="stretch", hide_index=True)
+    col_b.download_button(label ="Download Optimized Schedule",
+                              data = optimized_schedule_table.to_csv(index=False),
+                              file_name="optimized_schedule.csv",
+                              mime="text/csv",
+                              on_click="ignore"
+                              )
 else:
     st.info("👈 Upload a weather CSV (optional), then click **Run Scheduler**.")
 
