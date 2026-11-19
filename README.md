@@ -1,7 +1,7 @@
 # Offshore Vessel Scheduling Optimizer
 
 A Python decision-support tool that schedules offshore jobs across a small vessel fleet around weather windows, and compares a simple first-come-first-served plan with an optimized plan built using **Google OR-Tools (CP-SAT)**.
-
+**Live demo:** https://offshore-vessel-scheduler.streamlit.app
 ## Result
 
 | Approach | All jobs finished by |
@@ -33,6 +33,16 @@ A Python decision-support tool that schedules offshore jobs across a small vesse
    - *Goal:* minimize the day the last job finishes
 6. **Comparison chart** (`compare.py`): draws both schedules as timelines.
 
+## Web app
+
+The Streamlit page (`app.py`) runs the whole pipeline in the browser:
+
+- **Run Scheduler** compares the greedy baseline with the optimizer
+- **Upload your own data:** weather and jobs CSV files, checked before use (`checks.py`); problems such as missing columns, duplicate job IDs or invalid durations are shown as clear error messages
+- **Sample template** to download, showing the expected weather format
+- **Download** both schedules as CSV
+- Tabs to view the vessels, jobs and weather data
+
 ## Project structure
 
 ```
@@ -50,6 +60,8 @@ baseline.py           workable days + greedy baseline
 optimizer.py          OR-Tools CP-SAT model
 compare.py            comparison chart
 test_clean_weather.py pytest tests for the cleaning functions
+app.py                Streamlit web page
+checks.py             checks for uploaded CSV files
 ```
 
 ## How to run
