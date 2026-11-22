@@ -12,7 +12,7 @@ st.title("🚢 Vessel Schedule Optimizer")
 st.write("Efficiently scheduling the Jobs with available vessels")
 
 vessels = pd.read_csv("data/vessels_anon.csv")
-jobs = pd.read_csv("data/jobs_anon.csv")
+#jobs = pd.read_csv("data/jobs_anon.csv")
 
 with open("data/weather_cleaned.csv") as f:
     template = f.read()
@@ -26,7 +26,7 @@ st.sidebar.download_button(
 st.sidebar.header("⚙️ Controls")
 st.sidebar.write("Click to compare the baseline and optimized schedules")
 uploaded = st.sidebar.file_uploader("Upload weather CSV", type="csv")
-job_file = st.sidebar.file_uploader("Uplaod job CSV",type="csv")
+job_file = st.sidebar.file_uploader("Upload job CSV",type="csv")
 if uploaded is None:
     weather = pd.read_csv("data/weather_cleaned.csv")
 else:
@@ -91,7 +91,7 @@ if run:
                               on_click="ignore"
                               )
 else:
-    st.info("👈 Upload a weather CSV (optional), then click **Run Scheduler**.")
+    st.info("👈 Upload your own weather or job CSV (optional), then click **Run Scheduler**.")
 
 job_colors = {
     "Turbine installation": "#FDE68A",
