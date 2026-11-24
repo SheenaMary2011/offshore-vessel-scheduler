@@ -23,6 +23,15 @@ st.sidebar.download_button(
     file_name="weather_template.csv",
     mime="text/csv",
 )
+with open("data/jobs_anon.csv") as f:
+    template = f.read()
+
+st.sidebar.download_button(
+    label="Download jobs template",
+    data=template,
+    file_name="job_template.csv",
+    mime="text/csv",
+)
 st.sidebar.header("⚙️ Controls")
 st.sidebar.write("Click to compare the baseline and optimized schedules")
 uploaded = st.sidebar.file_uploader("Upload weather CSV", type="csv")
