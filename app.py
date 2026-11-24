@@ -4,14 +4,14 @@ from clean_weather import clean_weather, check_weather
 from baseline import run_baseline
 from optimizer import run_optimizer
 from compare import make_comparison_chart
-from checks import check_jobs
+from checks import check_jobs,check_vessels
 
 st.set_page_config(page_title="Vessel Scheduler", layout="wide")
 
 st.title("🚢 Vessel Schedule Optimizer")
 st.write("Efficiently scheduling the Jobs with available vessels")
 
-vessels = pd.read_csv("data/vessels_anon.csv")
+#vessels = pd.read_csv("data/vessels_anon.csv")
 #jobs = pd.read_csv("data/jobs_anon.csv")
 
 with open("data/weather_cleaned.csv") as f:
@@ -32,10 +32,20 @@ st.sidebar.download_button(
     file_name="job_template.csv",
     mime="text/csv",
 )
+with open("data/vessels_anon.csv") as f:
+    template = f.read()
+
+st.sidebar.download_button(
+    label="Download vessels template",
+    data=template,
+    file_name="vessels_template.csv",
+    mime="text/csv",
+)
 st.sidebar.header("⚙️ Controls")
 st.sidebar.write("Click to compare the baseline and optimized schedules")
 uploaded = st.sidebar.file_uploader("Upload weather CSV", type="csv")
 job_file = st.sidebar.file_uploader("Upload job CSV",type="csv")
+vessel_file = st.sidebar.file_uploader("Upload vessels CSV", type="csv")
 if uploaded is None:
     weather = pd.read_csv("data/weather_cleaned.csv")
 else:
@@ -60,6 +70,25 @@ else:
         st.stop()
     jobs["duration_days"] = jobs["duration_days"].astype(int)
     st.sidebar.success("✅ Jobs file loaded")
+
+
+if vessel_file is None:
+    vessels = pd.read_csv("data/vessels_anon.csv")
+else:
+    try:
+        vessels = pd.read_csv(vessel_file, dtype=str)
+    except pd.errors.EmptyDataError:
+        st.error("The vessels file is empty.")
+        st.stop()
+    vessels = vessels.drop_duplicates()
+    problems = check_vessels(vessels)
+    if len(problems) > 0:
+        for error in problems:
+            st.error(error)
+        st.stop()
+    vessels["max_wave_height_m"] = vessels["max_wave_height_m"].astype(float)
+    st.sidebar.success("✅Vessel file loaded")
+
 
 
 run = st.sidebar.button("🚀 Run Scheduler", type="primary", width="stretch")
@@ -100,7 +129,7 @@ if run:
                               on_click="ignore"
                               )
 else:
-    st.info("👈 Upload your own weather or job CSV (optional), then click **Run Scheduler**.")
+    st.info("👈 Upload your own weather , vessel or job CSV (optional), then click **Run Scheduler**.")
 
 job_colors = {
     "Turbine installation": "#FDE68A",
