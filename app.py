@@ -49,7 +49,11 @@ vessel_file = st.sidebar.file_uploader("Upload vessels CSV", type="csv")
 if uploaded is None:
     weather = pd.read_csv("data/weather_cleaned.csv")
 else:
-    raw = pd.read_csv(uploaded, dtype=str)
+    try:
+        raw = pd.read_csv(uploaded, dtype=str)
+    except pd.errors.EmptyDataError:
+            st.error("The weather file is empty.")
+            st.stop()
     problems = check_weather(raw)
     if len(problems) > 0:
         for error in problems:
@@ -61,7 +65,11 @@ else:
 if job_file is None:
     jobs = pd.read_csv("data/jobs_anon.csv")
 else:
-    jobs = pd.read_csv(job_file, dtype=str)
+    try:
+        jobs = pd.read_csv(job_file, dtype=str)
+    except pd.errors.EmptyDataError:
+            st.error("The job file is empty.")
+            st.stop()
     jobs = jobs.drop_duplicates()
     problems = check_jobs(jobs)
     if len(problems) > 0:
