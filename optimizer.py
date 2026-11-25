@@ -33,6 +33,8 @@ def run_optimizer(weather, vessels, jobs):
                 
         for name, storms in storm_days_by_vessel.items():
             allowed = get_allowed_starts(duration, storms)
+            if len(allowed) == 0:      # this vessel can never do this job
+                continue
             is_assigned = model.new_bool_var(f"{job_id}_on_{name}")
             start = model.new_int_var_from_domain(cp_model.Domain.from_values(allowed), f"{job_id}_start_{name}")
             finish = model.new_int_var(0, HORIZON, f"{job_id}_finish_{name}")
@@ -52,7 +54,10 @@ def run_optimizer(weather, vessels, jobs):
     model.minimize(last_day) 
                             # make it as small as possible
     solver = cp_model.CpSolver()
-    solver.solve(model)
+    solver.parameters.max_time_in_seconds = 20       # don't let the page hang
+    status = solver.solve(model)
+    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        return None, None  # no schedule is possible
 
      
 

@@ -154,6 +154,9 @@ if run:
     with st.spinner("Optimizing schedule..."):
         base_schedule_table, last_finish = run_baseline(weather, vessels, jobs)
         optimized_schedule_table, last_day = run_optimizer(weather, vessels, jobs)
+    if last_day is None:
+        st.error("No schedule is possible with this data. Some jobs never fit the weather windows of any vessel. Try longer forecasts, shorter jobs or higher vessel limits.")
+        st.stop()
     st.success("Scheduling complete!")
 
     r1, r2, r3 = st.columns(3)
