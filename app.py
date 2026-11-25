@@ -10,6 +10,49 @@ st.set_page_config(page_title="Vessel Scheduler", layout="wide")
 
 st.title("🚢 Vessel Schedule Optimizer")
 st.write("Efficiently scheduling the Jobs with available vessels")
+with st.expander("ℹ️ What is this project? (click to read)"):
+    st.markdown(
+        """
+**The problem.** Offshore work (installing turbines, inspecting cables, surveying the seabed)
+can only happen when the sea is calm enough. Each vessel has its own safe wave-height limit.
+Planners must fit every job into these weather windows across the fleet, as early as possible.
+
+**What this tool does.** It takes three inputs: a **weather forecast**, a list of **jobs**,
+and a list of **vessels**. It builds two plans and compares them:
+- a **simple baseline**: give each job to the vessel that is free earliest (first come, first served)
+- an **optimized plan**: Google OR-Tools tries the combinations and finds the earliest possible finish
+
+**With the sample data:** the baseline finishes on **day 27**, the optimizer on **day 23**,
+saving **4 days**. You can upload your own files in the sidebar to try your own scenario.
+"""
+    )
+    st.markdown("**How it works** 🚢🌊")
+    st.graphviz_chart(
+        """
+digraph {
+    rankdir=LR;
+    node [shape=box, style="rounded,filled", fillcolor="#E0F2FE", color="#0EA5E9", fontname="Helvetica", fontsize=14];
+    data    [label="🌊 📋 🚢\\n1. Inputs\\nweather · jobs · vessels"];
+    clean   [label="🧹\\n2. Check & clean\\nfix dates and units,\\nreject bad files"];
+    storms  [label="⛅ 🌊\\n3. Safe sea days\\nper vessel\\n(missing data = unsafe)"];
+    greedy  [label="🚢 ➡ 🚢\\n4a. Baseline\\nfirst come,\\nfirst served", fillcolor="#FEF3C7", color="#F59E0B"];
+    opt     [label="🧠\\n4b. Optimizer\\nGoogle OR-Tools\\n(CP-SAT)", fillcolor="#DCFCE7", color="#22C55E"];
+    compare [label="🏁 📊\\n5. Compare\\nfinish day, chart,\\ndownloads"];
+    data -> clean -> storms;
+    storms -> greedy -> compare;
+    storms -> opt -> compare;
+}
+"""
+    )
+    st.markdown(
+        """
+**What's next**
+1. **Reinforcement learning:** train an RL agent to schedule the same jobs, and compare it with
+   the OR-Tools optimizer and the baseline. Which plans better when the forecast changes day to day?
+2. **A general scheduling engine:** let users define their own constraints and goals,
+   so the same tool can optimize other scenarios, not just vessels and weather.
+"""
+    )
 
 #vessels = pd.read_csv("data/vessels_anon.csv")
 #jobs = pd.read_csv("data/jobs_anon.csv")
